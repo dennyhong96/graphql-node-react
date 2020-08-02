@@ -7,6 +7,9 @@ const {
   GraphQLInt,
 } = require("graphql");
 
+const Book = require("../models/Book");
+const Author = require("../models/Author");
+
 // DUMMY DATA
 const books = [
   { name: "Name of the Wind", genre: "Fantasy", id: "1", authorId: "1" },
@@ -31,9 +34,9 @@ const BookType = new GraphQLObjectType({
     genre: { type: GraphQLString },
     author: {
       type: AuthorType,
-      resolve(parent, args) {
+      async resolve(parent, args) {
         // Join / populate here
-        return authors.find((author) => author.id === parent.authorId);
+        return await Author.find({ id: parent.authorId });
       },
     },
   }),
@@ -47,8 +50,8 @@ const AuthorType = new GraphQLObjectType({
     age: { type: GraphQLInt },
     books: {
       type: new GraphQLList(BookType),
-      resolve(parent, args) {
-        return books.filter((book) => book.authorId === parent.id);
+      async resolve(parent, args) {
+        return await Book.find({ authorId: parent.id });
       },
     },
   }),
@@ -60,28 +63,28 @@ const RootQuery = new GraphQLObjectType({
     book: {
       type: BookType,
       args: { id: { type: GraphQLID } },
-      resolve(parent, args) {
+      async resolve(parent, args) {
         // Get data from DB
-        return books.find((book) => book.id === args.id);
+        return await Book.findById(args.id);
       },
     },
     books: {
       type: new GraphQLList(BookType),
-      resolve(parent, args) {
-        return books;
+      async resolve(parent, args) {
+        return await Book.find();
       },
     },
     author: {
       type: AuthorType,
       args: { id: { type: GraphQLID } },
-      resolve(parent, args) {
-        return authors.find((author) => author.id === args.id);
+      async resolve(parent, args) {
+        return await Author.findById(args.id);
       },
     },
     authors: {
       type: new GraphQLList(AuthorType),
-      resolve(parent, args) {
-        return authors;
+      async resolve(parent, args) {
+        return await Author.find();
       },
     },
   },
