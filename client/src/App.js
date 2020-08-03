@@ -1,6 +1,7 @@
 import React from "react";
 
 import BookList from "./components/BookList";
+import AddBook from "./components/AddBook";
 import "./App.css";
 
 function App() {
@@ -8,6 +9,8 @@ function App() {
     <div id="main">
       <h1>Reading List</h1>
       <BookList />
+      <hr />
+      <AddBook />
     </div>
   );
 }
